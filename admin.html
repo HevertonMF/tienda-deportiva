@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <title>Panel de administración | Tienda deportiva</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/estilo.css">
+  </head>
+  <body id="admin">
+    <nav id="izquierda">
+      <a href="admin.html" class="activo">Pedidos</a>
+      <a href="index.html">Ver la tienda</a>
+    </nav>
+    <div id="derecha">
+      <h1>Pedidos</h1>
+      <p class="nota">Esto es una demo: los pedidos se guardan solo en tu navegador, así que aquí ves las compras que has hecho tú. En la versión con Flask se guardan en una base de datos SQLite.</p>
+      <div id="resumen"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Nº</th><th>Fecha</th><th>Productos</th><th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td colspan="4">Cargando pedidos...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <script>
+      // En la demo leo los pedidos guardados en este navegador
+      let guardados = []
+      try { guardados = JSON.parse(localStorage.getItem("pedidos")) || [] } catch(e) {}
+      Promise.resolve(guardados.reverse())
+      .then(function(pedidos){
+        console.log(pedidos)
+        let cuerpo = document.querySelector("tbody")
+        cuerpo.innerHTML = ""
+        let facturado = 0
+        let articulos = 0
+
+        if(pedidos.length == 0){
+          cuerpo.innerHTML = `<tr><td colspan="4">Todavía no hay pedidos. Haz una compra en la tienda y vuelve aquí.</td></tr>`
+        }
+
+        pedidos.forEach(function(pedido){
+          // La columna carga tiene el pedido en JSON, lo convierto en lista
+          let carga = JSON.parse(pedido.carga)
+          let total = 0
+          let lista = ""
+          carga.forEach(function(producto){
+            total += producto.precio*1
+            lista += `<li><span>`+producto.nombre+`</span><span>`+producto.precio+` €</span></li>`
+          })
+          facturado += total
+          articulos += carga.length
+          cuerpo.innerHTML += `
+            <tr>
+              <td>#`+pedido.id+`</td>
+              <td>`+pedido.fecha+`</td>
+              <td><ul>`+lista+`</ul></td>
+              <td class="importe">`+total+` €</td>
+            </tr>
+          `
+        })
+
+        // Resumen de arriba
+        document.querySelector("#resumen").innerHTML = `
+          <div><span>Pedidos</span><strong>`+pedidos.length+`</strong></div>
+          <div><span>Artículos vendidos</span><strong>`+articulos+`</strong></div>
+          <div><span>Facturado</span><strong>`+facturado+` €</strong></div>
+        `
+      })
+    </script>
+  </body>
+</html>
