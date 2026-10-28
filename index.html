@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <title>Tienda deportiva | Heverton Marques</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/estilo.css">
+  </head>
+  <body>
+    <header>
+      <h1>Tienda deportiva</h1>
+      <h2>Aquí tienes tus artículos deportivos</h2>
+    </header>
+    <main>
+      <!-- Buscador y categorías -->
+      <div id="filtros">
+        <input id="buscador" type="search" placeholder="Busca un producto: balón, bici, mancuernas...">
+        <nav id="categorias"></nav>
+      </div>
+      <p id="contador"></p>
+      <section>
+        <p class="cargando">Cargando productos...</p>
+      </section>
+    </main>
+    <footer>
+      (c) 2026 Heverton Marques · Demo de un proyecto con Flask y SQLite · <a href="admin.html">Panel de admin</a>
+    </footer>
+    <aside>
+      <h3>🛒 Tu pedido</h3>
+      <div id="lineas">
+        <p class="vacio">Todavía no has añadido nada. Pulsa "Añadir" en un producto.</p>
+      </div>
+    </aside>
+    <script>
+      // Creamos un pedido vacío
+      let pedido = []
+      let productos = []          // Aquí guardo todos los productos que vienen del servidor
+      let categoriaActual = "Todo"
+      let lineas = document.querySelector("#lineas")
+      let seccion = document.querySelector("section")
+
+      // Cada categoría tiene un icono y unas palabras que la identifican
+      let categorias = [
+        {"nombre":"Running",      "icono":"🏃", "palabras":["running","trail","correr","cortavientos","reflectante","cinturón de running","cronómetro"]},
+        {"nombre":"Fútbol",       "icono":"⚽", "palabras":["fútbol","portero","espinilleras","portería","conos","agilidad","silbato","capitán"]},
+        {"nombre":"Baloncesto",   "icono":"🏀", "palabras":["baloncesto","canasta"]},
+        {"nombre":"Raqueta",      "icono":"🎾", "palabras":["tenis","pádel","bádminton","volantes","overgrip","ping pong","paletero"]},
+        {"nombre":"Más balones",  "icono":"🏐", "palabras":["voleibol","balonmano","rugby"]},
+        {"nombre":"Gimnasio",     "icono":"🏋️", "palabras":["mancuernas","banco","kettlebell","discos","barra","abdominal","gimnasio","levantamiento","bandas","comba","medicinal","boxeo","saco"]},
+        {"nombre":"Yoga y fitness","icono":"🧘", "palabras":["esterilla","yoga","pilates","rodillo","cinta de correr","estática"]},
+        {"nombre":"Ciclismo",     "icono":"🚲", "palabras":["bicicleta","ciclismo","candado","bomba","bidón"]},
+        {"nombre":"Natación",     "icono":"🏊", "palabras":["natación","piscina","bañador","toalla","aletas"]},
+        {"nombre":"Patinaje",     "icono":"🛹", "palabras":["patines","monopatín","patinaje"]},
+        {"nombre":"Ropa",         "icono":"👕", "palabras":["camiseta","pantalón","sudadera","chándal","mallas","sujetador","chaqueta","calcetines","gorra","cinta para el pelo","muñequeras"]},
+        {"nombre":"Accesorios",   "icono":"🎒", "palabras":[]}  // Lo que no encaje en ninguna va aquí
+      ]
+
+      // Busco la categoría de un producto mirando su nombre
+      function dameCategoria(producto){
+        let nombre = producto.nombre.toLowerCase()
+        // Las zapatillas van a su deporte si lo dicen, si no a Running
+        for(let categoria of categorias){
+          for(let palabra of categoria.palabras){
+            if(nombre.includes(palabra)){ return categoria }
+          }
+        }
+        if(nombre.includes("zapatillas")){ return categorias[0] }
+        return categorias[categorias.length-1]
+      }
+
+      // Pinto los botones de las categorías
+      function pintaCategorias(){
+        let nav = document.querySelector("#categorias")
+        nav.innerHTML = `<button class="chip activo" categoria="Todo">Todo</button>`
+        categorias.forEach(function(categoria){
+          nav.innerHTML += `<button class="chip" categoria="`+categoria.nombre+`">`+categoria.icono+` `+categoria.nombre+`</button>`
+        })
+        nav.querySelectorAll(".chip").forEach(function(chip){
+          chip.onclick = function(){
+            nav.querySelector(".activo").classList.remove("activo")
+            chip.classList.add("activo")
+            categoriaActual = chip.getAttribute("categoria")
+            pintaProductos()
+          }
+        })
+      }
+
+      // Pinto los productos según la categoría y lo que haya en el buscador
+      function pintaProductos(){
+        let texto = document.querySelector("#buscador").value.toLowerCase()
+        seccion.innerHTML = ""
+        let cuantos = 0
+        productos.forEach(function(producto){
+          let categoria = dameCategoria(producto)
+          let pasaCategoria = categoriaActual == "Todo" || categoria.nombre == categoriaActual
+          let pasaTexto = (producto.nombre + " " + producto.descripcion).toLowerCase().includes(texto)
+          if(pasaCategoria && pasaTexto){
+            cuantos++
+            seccion.innerHTML += `
+              <article>
+                <div class="icono">`+categoria.icono+`</div>
+                <span class="categoria">`+categoria.nombre+`</span>
+                <h4>`+producto.nombre+`</h4>
+                <p>`+producto.descripcion+`</p>
+                <div class="compra">
+                  <span class="precio">`+producto.precio+` €</span>
+                  <button precio="`+producto.precio+`" nombre="`+producto.nombre+`">Añadir</button>
+                </div>
+              </article>
+            `
+          }
+        })
+        if(cuantos == 0){
+          seccion.innerHTML = `<p class="cargando">No hay productos con "`+texto+`". Prueba con otra palabra o elige "Todo".</p>`
+        }
+        document.querySelector("#contador").innerHTML = cuantos + " productos"
+        // Cuando pulse un botón de producto, lo añado al pedido
+        seccion.querySelectorAll("button").forEach(function(boton){
+          boton.onclick = function(){
+            pedido.push({"nombre":boton.getAttribute("nombre"),"precio":boton.getAttribute("precio")})
+            console.log(pedido)
+            boton.innerHTML = "Añadido ✓"
+            setTimeout(function(){ boton.innerHTML = "Añadir" }, 900)
+            pintaTicket()
+          }
+        })
+      }
+
+      // Pinto el ticket con lo que hay en el pedido
+      function pintaTicket(){
+        if(pedido.length == 0){
+          lineas.innerHTML = `<p class="vacio">Todavía no has añadido nada. Pulsa "Añadir" en un producto.</p>`
+          return
+        }
+        lineas.innerHTML = ""
+        let suma = 0
+        pedido.forEach(function(producto, posicion){
+          lineas.innerHTML += `
+            <p class="linea">
+              <span>`+producto.nombre+`</span>
+              <span>`+producto.precio+` € <button class="quitar" posicion="`+posicion+`" aria-label="Quitar `+producto.nombre+`">×</button></span>
+            </p>
+          `
+          suma += producto.precio*1
+        })
+        lineas.innerHTML += `<p class="total"><span>Total</span><span>`+suma+` €</span></p>`
+        lineas.innerHTML += `<button id="comprar">Comprar</button>`
+        // Botones para quitar un producto del ticket
+        lineas.querySelectorAll(".quitar").forEach(function(boton){
+          boton.onclick = function(){
+            pedido.splice(boton.getAttribute("posicion"), 1)
+            pintaTicket()
+          }
+        })
+        document.querySelector("#comprar").onclick = comprar
+      }
+
+      // Versión de demostración: el pedido se guarda en este navegador (localStorage)
+      // En la versión con Flask se envía al servidor con fetch("/insertapedido")
+      function comprar(){
+        console.log("Vamos a guardar la compra")
+        let guardados = []
+        try { guardados = JSON.parse(localStorage.getItem("pedidos")) || [] } catch(e) {}
+        let fecha = new Date()
+        guardados.push({
+          "id": guardados.length + 1,
+          "fecha": fecha.toLocaleString("es-ES", {dateStyle:"short", timeStyle:"short"}),
+          "carga": JSON.stringify(pedido)
+        })
+        try { localStorage.setItem("pedidos", JSON.stringify(guardados)) } catch(e) {}
+        pedido = []
+        lineas.innerHTML = `<p class="hecho">¡Gracias! Tu pedido se ha guardado.<br><a href="admin.html">Verlo en el panel de admin</a></p>`
+      }
+
+      // El buscador filtra mientras escribo
+      document.querySelector("#buscador").oninput = pintaProductos
+
+      fetch("productos.json")	// En la demo los productos vienen de un archivo JSON
+      .then(function(resultado){return resultado.json()}) // Que sepas que lo que viene, viene como json
+      .then(function(datos){	// Cuando vengan los datos
+        console.log(datos)		// Ponmelos en la consola - SIEMPRE PRIMERO
+        productos = datos
+        pintaCategorias()
+        pintaProductos()
+      })
+    </script>
+  </body>
+</html>
