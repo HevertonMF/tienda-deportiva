@@ -16,52 +16,85 @@
     </nav>
     <div id="derecha">
       <h1>Pedidos</h1>
-      <p class="nota">Esto es una demo: los pedidos se guardan solo en tu navegador, así que aquí ves las compras que has hecho tú. En la versión con Flask se guardan en una base de datos SQLite.</p>
+      <p class="nota">Esto es una demo: los pedidos se guardan solo en tu navegador, así que aquí ves y editas las compras que has hecho tú. En la versión con Flask se guardan en una base de datos SQLite.</p>
+      <p class="mensaje" id="mensaje" hidden></p>
       <div id="resumen"></div>
       <table>
         <thead>
           <tr>
-            <th>Nº</th><th>Fecha</th><th>Productos</th><th>Total</th>
+            <th>Nº</th><th>Fecha</th><th>Productos</th><th>Total</th><th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td colspan="4">Cargando pedidos...</td></tr>
+          <tr><td colspan="5">Cargando pedidos...</td></tr>
         </tbody>
       </table>
     </div>
     <script>
-      // En la demo leo los pedidos guardados en este navegador
-      let guardados = []
-      try { guardados = JSON.parse(localStorage.getItem("pedidos")) || [] } catch(e) {}
-      Promise.resolve(guardados.reverse())
-      .then(function(pedidos){
+      let pedidos = []     // Los pedidos que vienen del servidor
+      let productos = []   // Los productos de la tienda (para añadirlos al editar)
+      let cuerpo = document.querySelector("tbody")
+
+      // Enseño un mensaje arriba durante unos segundos
+      function avisa(texto){
+        let mensaje = document.querySelector("#mensaje")
+        mensaje.innerHTML = texto
+        mensaje.hidden = false
+        setTimeout(function(){ mensaje.hidden = true }, 3000)
+      }
+
+      // Calculo el total de una lista de productos
+      function sumaTotal(carga){
+        let total = 0
+        carga.forEach(function(producto){ total += producto.precio*1 })
+        return total
+      }
+
+      // En la demo los pedidos están guardados en este navegador (localStorage)
+      function leePedidos(){
+        try { return JSON.parse(localStorage.getItem("pedidos")) || [] } catch(e) { return [] }
+      }
+      function guardaPedidos(lista){
+        try { localStorage.setItem("pedidos", JSON.stringify(lista)) } catch(e) {}
+      }
+
+      // Leo los pedidos y los pinto (los más nuevos primero)
+      function cargaPedidos(){
+        pedidos = leePedidos().reverse()
         console.log(pedidos)
-        let cuerpo = document.querySelector("tbody")
+        pintaPedidos()
+      }
+
+      // Pinto la tabla y el resumen
+      function pintaPedidos(){
         cuerpo.innerHTML = ""
         let facturado = 0
         let articulos = 0
 
         if(pedidos.length == 0){
-          cuerpo.innerHTML = `<tr><td colspan="4">Todavía no hay pedidos. Haz una compra en la tienda y vuelve aquí.</td></tr>`
+          cuerpo.innerHTML = `<tr><td colspan="5">Todavía no hay pedidos. Haz una compra en la tienda y vuelve aquí.</td></tr>`
         }
 
         pedidos.forEach(function(pedido){
           // La columna carga tiene el pedido en JSON, lo convierto en lista
           let carga = JSON.parse(pedido.carga)
-          let total = 0
+          let total = sumaTotal(carga)
           let lista = ""
           carga.forEach(function(producto){
-            total += producto.precio*1
             lista += `<li><span>`+producto.nombre+`</span><span>`+producto.precio+` €</span></li>`
           })
           facturado += total
           articulos += carga.length
           cuerpo.innerHTML += `
-            <tr>
+            <tr id="fila`+pedido.id+`">
               <td>#`+pedido.id+`</td>
               <td>`+pedido.fecha+`</td>
               <td><ul>`+lista+`</ul></td>
               <td class="importe">`+total+` €</td>
+              <td class="acciones">
+                <button class="editar" pedido="`+pedido.id+`">Editar</button>
+                <button class="eliminar" pedido="`+pedido.id+`">Eliminar</button>
+              </td>
             </tr>
           `
         })
@@ -72,7 +105,125 @@
           <div><span>Artículos vendidos</span><strong>`+articulos+`</strong></div>
           <div><span>Facturado</span><strong>`+facturado+` €</strong></div>
         `
-      })
+
+        // Botones de editar y eliminar
+        cuerpo.querySelectorAll(".editar").forEach(function(boton){
+          boton.onclick = function(){ editaPedido(boton.getAttribute("pedido")) }
+        })
+        cuerpo.querySelectorAll(".eliminar").forEach(function(boton){
+          boton.onclick = function(){ preguntaEliminar(boton.getAttribute("pedido")) }
+        })
+      }
+
+      // ===== ELIMINAR =====
+      // Antes de borrar pregunto en la misma fila
+      function preguntaEliminar(id){
+        let acciones = document.querySelector("#fila"+id+" .acciones")
+        acciones.innerHTML = `
+          <span class="pregunta">¿Eliminar este pedido?</span>
+          <button class="confirmar">Sí, eliminar</button>
+          <button class="cancelar">No</button>
+        `
+        acciones.querySelector(".confirmar").onclick = function(){ eliminaPedido(id) }
+        acciones.querySelector(".cancelar").onclick = pintaPedidos
+      }
+
+      // En la versión con Flask esto es un fetch POST a "/borrapedido"
+      function eliminaPedido(id){
+        let lista = leePedidos().filter(function(p){ return p.id != id })
+        guardaPedidos(lista)
+        avisa("Pedido #"+id+" eliminado")
+        cargaPedidos()
+      }
+
+      // ===== EDITAR =====
+      // Convierto la fila en un pequeño formulario
+      function editaPedido(id){
+        pintaPedidos() // Por si había otra fila editándose
+        let pedido = pedidos.find(function(p){ return p.id == id })
+        let carga = JSON.parse(pedido.carga)
+        let fila = document.querySelector("#fila"+id)
+        fila.classList.add("editando")
+
+        let opciones = ""
+        productos.forEach(function(producto, posicion){
+          opciones += `<option value="`+posicion+`">`+producto.nombre+` (`+producto.precio+` €)</option>`
+        })
+
+        fila.children[2].innerHTML = `
+          <div class="lineas-edicion"></div>
+          <div class="anadir-linea">
+            <select>`+opciones+`</select>
+            <button class="anadir">Añadir</button>
+          </div>
+        `
+        fila.children[4].innerHTML = `
+          <button class="guardar">Guardar</button>
+          <button class="cancelar">Cancelar</button>
+        `
+
+        // Pinto una línea editable por cada producto
+        function pintaLineas(){
+          let caja = fila.querySelector(".lineas-edicion")
+          caja.innerHTML = ""
+          carga.forEach(function(producto, posicion){
+            caja.innerHTML += `
+              <div class="linea-edicion">
+                <input class="nombre" value="`+producto.nombre+`" posicion="`+posicion+`">
+                <input class="precio" type="number" min="0" value="`+producto.precio+`" posicion="`+posicion+`">
+                <span>€</span>
+                <button class="quitar-linea" posicion="`+posicion+`" aria-label="Quitar">×</button>
+              </div>
+            `
+          })
+          if(carga.length == 0){
+            caja.innerHTML = `<p>El pedido está vacío. Añade un producto o elimina el pedido.</p>`
+          }
+          // Si cambio un nombre o un precio, lo guardo en la lista
+          caja.querySelectorAll("input").forEach(function(campo){
+            campo.oninput = function(){
+              let posicion = campo.getAttribute("posicion")
+              if(campo.classList.contains("nombre")){ carga[posicion].nombre = campo.value }
+              else { carga[posicion].precio = campo.value }
+              fila.children[3].innerHTML = sumaTotal(carga)+" €"
+            }
+          })
+          caja.querySelectorAll(".quitar-linea").forEach(function(boton){
+            boton.onclick = function(){
+              carga.splice(boton.getAttribute("posicion"), 1)
+              pintaLineas()
+            }
+          })
+          fila.children[3].innerHTML = sumaTotal(carga)+" €"
+        }
+        pintaLineas()
+
+        // Añadir un producto de la tienda
+        fila.querySelector(".anadir").onclick = function(){
+          let elegido = productos[fila.querySelector("select").value]
+          carga.push({"nombre": elegido.nombre, "precio": elegido.precio})
+          pintaLineas()
+        }
+
+        // Guardar los cambios en el servidor
+        // En la versión con Flask esto es un fetch POST a "/actualizapedido"
+        fila.querySelector(".guardar").onclick = function(){
+          let lista = leePedidos()
+          lista.forEach(function(p){
+            if(p.id == id){ p.carga = JSON.stringify(carga) }
+          })
+          guardaPedidos(lista)
+          avisa("Pedido #"+id+" guardado")
+          cargaPedidos()
+        }
+        fila.querySelector(".cancelar").onclick = pintaPedidos
+      }
+
+      // Al abrir la página cargo los productos y los pedidos
+      fetch("productos.json")
+      .then(function(resultado){return resultado.json()})
+      .then(function(datos){ productos = datos })
+      cargaPedidos()
     </script>
   </body>
 </html>
