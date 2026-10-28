@@ -21,33 +21,140 @@ body,html{
   line-height:1.5;
 }
 
+/* ===== Franja de avisos ===== */
+#avisos{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:8px 40px;
+  padding:8px 24px;
+  background:var(--naranja);
+  color:var(--blanco);
+  font-size:14px;
+  font-weight:500;
+}
+
 /* ===== Cabecera: como una pista de atletismo ===== */
 header{
-  padding:56px 24px 48px 24px;
   background:var(--tinta);
   color:var(--blanco);
   /* líneas de calle de la pista */
   border-bottom:10px solid var(--naranja);
   box-shadow:inset 0px -14px 0px -10px rgba(255,255,255,0.9);
 }
-header h1,
-header h2{
+
+/* Barra con logo y menú */
+#barra{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:16px;
   max-width:1100px;
   margin:0px auto;
+  padding:18px 24px;
+  border-bottom:1px solid rgba(255,255,255,0.12);
 }
-header h1{
+#logo,
+.pie-logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
   font-family:var(--titulos);
   font-weight:800;
-  font-size:72px;
-  line-height:0.95;
+  font-size:26px;
+  text-transform:uppercase;
+  color:var(--blanco);
+  text-decoration:none;
+}
+.marca{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:var(--naranja);
+  color:var(--blanco);
+  font-size:20px;
+  font-style:italic;
+}
+#menu{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:4px;
+}
+#menu a{
+  padding:8px 12px;
+  border-radius:4px;
+  color:rgba(255,255,255,0.8);
+  text-decoration:none;
+  font-weight:500;
+}
+#menu a:hover{
+  background:rgba(255,255,255,0.1);
+  color:var(--blanco);
+}
+#ir-pedido{
+  border:1px solid rgba(255,255,255,0.3);
+}
+#contador-carrito{
+  display:inline-block;
+  min-width:22px;
+  margin-left:4px;
+  padding:0px 6px;
+  border-radius:11px;
+  background:var(--naranja);
+  color:var(--blanco);
+  font-size:13px;
+  font-weight:600;
+  text-align:center;
+}
+
+/* Portada */
+#portada{
+  max-width:1100px;
+  margin:0px auto;
+  padding:64px 24px 56px 24px;
+  /* calles de la pista dibujadas al fondo a la derecha */
+  background:
+    repeating-linear-gradient(-60deg, transparent 0px, transparent 46px, rgba(240,83,28,0.18) 46px, rgba(240,83,28,0.18) 50px)
+    right center / 45% 100% no-repeat;
+}
+#portada h1{
+  margin:0px;
+  font-family:var(--titulos);
+  font-weight:800;
+  font-size:88px;
+  line-height:0.92;
   text-transform:uppercase;
   letter-spacing:-0.01em;
 }
-header h2{
-  margin-top:12px;
-  font-weight:400;
-  font-size:20px;
+#portada h2{
+  margin:14px 0px 0px 0px;
+  font-weight:600;
+  font-size:22px;
+  color:var(--blanco);
+}
+#portada .lema{
+  max-width:48ch;
+  margin:10px 0px 28px 0px;
+  font-size:17px;
   color:rgba(255,255,255,0.7);
+}
+.boton-portada{
+  display:inline-block;
+  padding:14px 28px;
+  border-radius:4px;
+  background:var(--naranja);
+  color:var(--blanco);
+  font-weight:600;
+  font-size:17px;
+  text-decoration:none;
+}
+.boton-portada:hover{
+  background:var(--naranja-oscuro);
 }
 
 /* ===== Productos ===== */
@@ -193,11 +300,52 @@ button:focus-visible{
 
 /* ===== Pie de página ===== */
 footer{
+  margin-top:40px;
+  background:var(--tinta);
+  color:rgba(255,255,255,0.7);
+  font-size:15px;
+  border-top:10px solid var(--naranja);
+  box-shadow:inset 0px 14px 0px -10px rgba(255,255,255,0.9);
+}
+#pie{
+  display:grid;
+  grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:32px;
   max-width:1100px;
   margin:0px auto;
-  padding:24px 24px 48px 24px;
-  font-size:14px;
-  color:var(--gris);
+  padding:48px 24px 32px 24px;
+  box-sizing:border-box;
+}
+#pie h5{
+  margin:0px 0px 12px 0px;
+  font-family:var(--titulos);
+  font-weight:600;
+  font-size:20px;
+  color:var(--blanco);
+}
+#pie p{
+  margin:0px 0px 8px 0px;
+}
+#pie a{
+  display:block;
+  margin-bottom:8px;
+  color:rgba(255,255,255,0.7);
+  text-decoration:none;
+}
+#pie a:hover{
+  color:var(--naranja);
+}
+#pie .pie-logo{
+  margin-bottom:12px;
+}
+#copyright{
+  max-width:1100px;
+  margin:0px auto;
+  padding:16px 24px 32px 24px;
+  box-sizing:border-box;
+  border-top:1px solid rgba(255,255,255,0.12);
+  font-size:13px;
+  color:rgba(255,255,255,0.5);
 }
 
 /* ===== Ticket del pedido ===== */
@@ -282,16 +430,21 @@ aside #comprar:hover{
 
 /* En pantallas grandes dejo sitio al ticket para que no tape productos */
 @media (min-width:1200px){
-  main,footer{margin-right:320px;margin-left:auto;}
-  header h1,header h2{max-width:none;}
+  main{margin-right:320px;margin-left:auto;}
+  #pie,#copyright{padding-right:320px;max-width:none;}
 }
 
 /* ===== Móvil ===== */
 @media (max-width:600px){
-  header{padding:36px 16px 32px 16px;}
-  header h1{font-size:48px;}
-  main{padding:24px 16px 260px 16px;}
-  footer{padding:16px 16px 260px 16px;}
+  #avisos span:not(:first-child){display:none;}
+  #barra{padding:14px 16px;}
+  #menu a.ir-categoria{display:none;}
+  #portada{padding:36px 16px 40px 16px;background:none;}
+  #portada h1{font-size:52px;}
+  main{padding:24px 16px 24px 16px;}
+  #pie{grid-template-columns:1fr 1fr;padding:32px 16px 24px 16px;}
+  #pie > div:first-child{grid-column:1 / -1;}
+  #copyright{padding:16px 16px 120px 16px;}
   aside{width:auto;left:10px;right:10px;bottom:10px;max-height:40vh;}
   /* Si el pedido está vacío, en el móvil solo enseño el título */
   aside:has(.vacio){padding-bottom:20px;}
@@ -456,8 +609,101 @@ body#admin{
   #admin th,#admin td{padding:10px;}
 }
 
+/* ===== Admin: editar y eliminar pedidos ===== */
+#admin .acciones{
+  white-space:nowrap;
+}
+#admin .acciones button{
+  padding:7px 12px;
+  margin:0px 4px 4px 0px;
+  font-size:14px;
+}
+#admin .editar{
+  background:var(--tinta);
+}
+#admin .editar:hover{
+  background:var(--naranja);
+}
+#admin .eliminar,
+#admin .cancelar{
+  border:1px solid var(--linea);
+  background:var(--blanco);
+  color:var(--tinta);
+}
+#admin .eliminar:hover{
+  border-color:#b3261e;
+  background:#b3261e;
+  color:var(--blanco);
+}
+#admin .cancelar:hover{
+  background:var(--papel);
+}
+#admin .confirmar{
+  background:#b3261e;
+}
+#admin .confirmar:hover{
+  background:#8c1d17;
+}
+#admin .pregunta{
+  display:block;
+  margin-bottom:6px;
+  font-size:14px;
+  font-weight:600;
+  color:#b3261e;
+}
+/* Fila en modo edición */
+#admin tr.editando{
+  background:rgb(255,248,244);
+}
+#admin .linea-edicion{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:6px;
+}
+#admin .linea-edicion input{
+  padding:6px 8px;
+  border:1px solid var(--linea);
+  border-radius:4px;
+  font:inherit;
+  font-size:14px;
+}
+#admin .linea-edicion .nombre{flex:1;min-width:140px;}
+#admin .linea-edicion .precio{width:70px;}
+#admin .linea-edicion .quitar-linea{
+  padding:4px 10px;
+  background:transparent;
+  color:var(--gris);
+  font-size:18px;
+}
+#admin .linea-edicion .quitar-linea:hover{color:#b3261e;background:transparent;}
+#admin .anadir-linea{
+  display:flex;
+  gap:8px;
+  margin-top:8px;
+}
+#admin .anadir-linea select{
+  flex:1;
+  padding:6px 8px;
+  border:1px solid var(--linea);
+  border-radius:4px;
+  font:inherit;
+  font-size:14px;
+}
+#admin .anadir-linea button{
+  padding:6px 12px;
+  font-size:14px;
+  background:var(--tinta);
+}
+#admin .mensaje{
+  margin:0px 0px 16px 0px;
+  padding:10px 14px;
+  border-left:4px solid var(--naranja);
+  background:var(--blanco);
+  font-weight:600;
+}
+
 /* ===== Extras de la demo en GitHub Pages ===== */
-footer a{color:var(--tinta);}
 aside .hecho a{color:var(--naranja-oscuro);font-weight:bold;}
 #admin .nota{
   max-width:70ch;
