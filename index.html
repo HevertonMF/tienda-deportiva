@@ -20,11 +20,33 @@
     <meta name="twitter:card" content="summary_large_image">
   </head>
   <body>
+    <!-- Franja de avisos de arriba -->
+    <div id="avisos">
+      <span>🚚 Envío gratis en pedidos de más de 50 €</span>
+      <span>↩️ Devoluciones gratis durante 30 días</span>
+      <span>📍 Tienda en Valencia</span>
+    </div>
     <header>
-      <h1>Tienda deportiva</h1>
-      <h2>Aquí tienes tus artículos deportivos</h2>
+      <!-- Barra con el logo y el menú -->
+      <div id="barra">
+        <a href="index.html" id="logo"><span class="marca">TD</span> Tienda deportiva</a>
+        <nav id="menu">
+          <a href="#productos">Productos</a>
+          <a href="#productos" class="ir-categoria" categoria="Running">Running</a>
+          <a href="#productos" class="ir-categoria" categoria="Fútbol">Fútbol</a>
+          <a href="#productos" class="ir-categoria" categoria="Gimnasio">Gimnasio</a>
+          <a href="#pedido" id="ir-pedido">🛒 Mi pedido <span id="contador-carrito">0</span></a>
+        </nav>
+      </div>
+      <!-- Portada -->
+      <div id="portada">
+        <h1>Tienda deportiva</h1>
+        <h2>Aquí tienes tus artículos deportivos</h2>
+        <p class="lema">Zapatillas, ropa, balones y material para entrenar. Todo lo que necesitas para tu próximo reto.</p>
+        <a href="#productos" class="boton-portada">Ver productos</a>
+      </div>
     </header>
-    <main>
+    <main id="productos">
       <!-- Buscador y categorías -->
       <div id="filtros">
         <input id="buscador" type="search" placeholder="Busca un producto: balón, bici, mancuernas...">
@@ -36,9 +58,35 @@
       </section>
     </main>
     <footer>
-      (c) 2026 Heverton Marques · Demo de un proyecto con Flask y SQLite · <a href="admin.html">Panel de admin</a>
+      <div id="pie">
+        <div>
+          <p class="pie-logo"><span class="marca">TD</span> Tienda deportiva</p>
+          <p>Material deportivo para correr, jugar y entrenar. Proyecto hecho con Flask, SQLite y JavaScript.</p>
+        </div>
+        <div>
+          <h5>Categorías</h5>
+          <a href="#productos" class="ir-categoria" categoria="Running">Running</a>
+          <a href="#productos" class="ir-categoria" categoria="Fútbol">Fútbol</a>
+          <a href="#productos" class="ir-categoria" categoria="Ciclismo">Ciclismo</a>
+          <a href="#productos" class="ir-categoria" categoria="Natación">Natación</a>
+          <a href="#productos" class="ir-categoria" categoria="Gimnasio">Gimnasio</a>
+        </div>
+        <div>
+          <h5>Ayuda</h5>
+          <p>Envío gratis a partir de 50 €</p>
+          <p>Entrega en 24-48 horas</p>
+          <p>Devoluciones durante 30 días</p>
+        </div>
+        <div>
+          <h5>Contacto</h5>
+          <p>Valencia, España</p>
+          <p>Lunes a sábado, de 10:00 a 20:00</p>
+          <a href="admin.html">Panel de administración</a>
+        </div>
+      </div>
+      <p id="copyright">(c) 2026 Heverton Marques. Demo de un proyecto con Flask y SQLite.</p>
     </footer>
-    <aside>
+    <aside id="pedido">
       <h3>🛒 Tu pedido</h3>
       <div id="lineas">
         <p class="vacio">Todavía no has añadido nada. Pulsa "Añadir" en un producto.</p>
@@ -141,6 +189,7 @@
 
       // Pinto el ticket con lo que hay en el pedido
       function pintaTicket(){
+        document.querySelector("#contador-carrito").innerHTML = pedido.length
         if(pedido.length == 0){
           lineas.innerHTML = `<p class="vacio">Todavía no has añadido nada. Pulsa "Añadir" en un producto.</p>`
           return
@@ -175,15 +224,25 @@
         let guardados = []
         try { guardados = JSON.parse(localStorage.getItem("pedidos")) || [] } catch(e) {}
         let fecha = new Date()
+        let ultimo = guardados.length ? guardados[guardados.length-1].id : 0
         guardados.push({
-          "id": guardados.length + 1,
+          "id": ultimo + 1,
           "fecha": fecha.toLocaleString("es-ES", {dateStyle:"short", timeStyle:"short"}),
           "carga": JSON.stringify(pedido)
         })
         try { localStorage.setItem("pedidos", JSON.stringify(guardados)) } catch(e) {}
         pedido = []
+        document.querySelector("#contador-carrito").innerHTML = 0
         lineas.innerHTML = `<p class="hecho">¡Gracias! Tu pedido se ha guardado.<br><a href="admin.html">Verlo en el panel de admin</a></p>`
       }
+
+      // Los enlaces de categoría del menú y del pie eligen esa categoría
+      document.querySelectorAll(".ir-categoria").forEach(function(enlace){
+        enlace.onclick = function(){
+          let boton = document.querySelector('#categorias .chip[categoria="'+enlace.getAttribute("categoria")+'"]')
+          if(boton){ boton.click() }
+        }
+      })
 
       // El buscador filtra mientras escribo
       document.querySelector("#buscador").oninput = pintaProductos
