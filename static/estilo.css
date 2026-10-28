@@ -1,0 +1,470 @@
+/* ===== Colores y fuentes ===== */
+:root{
+  --tinta:#16191d;        /* casi negro, para textos y cabecera */
+  --papel:#f4f5f1;        /* fondo de la página */
+  --blanco:#ffffff;
+  --naranja:#f0531c;      /* color de pista de atletismo */
+  --naranja-oscuro:#c9400f;
+  --gris:#6b7078;
+  --linea:#e2e4de;
+  --titulos:'Barlow Condensed',sans-serif;
+  --texto:'Barlow',sans-serif;
+}
+
+body,html{
+  margin:0px;
+  padding:0px;
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:var(--texto);
+  font-size:16px;
+  line-height:1.5;
+}
+
+/* ===== Cabecera: como una pista de atletismo ===== */
+header{
+  padding:56px 24px 48px 24px;
+  background:var(--tinta);
+  color:var(--blanco);
+  /* líneas de calle de la pista */
+  border-bottom:10px solid var(--naranja);
+  box-shadow:inset 0px -14px 0px -10px rgba(255,255,255,0.9);
+}
+header h1,
+header h2{
+  max-width:1100px;
+  margin:0px auto;
+}
+header h1{
+  font-family:var(--titulos);
+  font-weight:800;
+  font-size:72px;
+  line-height:0.95;
+  text-transform:uppercase;
+  letter-spacing:-0.01em;
+}
+header h2{
+  margin-top:12px;
+  font-weight:400;
+  font-size:20px;
+  color:rgba(255,255,255,0.7);
+}
+
+/* ===== Productos ===== */
+main{
+  max-width:1100px;
+  margin:0px auto;
+  padding:40px 24px;
+  box-sizing:border-box;
+}
+section{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:16px;
+}
+section .cargando{
+  color:var(--gris);
+}
+
+article{
+  display:flex;
+  flex-direction:column;
+  padding:20px;
+  background:var(--blanco);
+  border:1px solid var(--linea);
+  border-radius:4px;
+}
+article h4{
+  margin:0px;
+  font-family:var(--titulos);
+  font-weight:600;
+  font-size:24px;
+  line-height:1.1;
+}
+article p{
+  flex:1;
+  margin:8px 0px 20px 0px;
+  font-size:15px;
+  color:var(--gris);
+}
+
+/* Precio y botón en la misma línea */
+article .compra{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding-top:16px;
+  border-top:1px solid var(--linea);
+}
+article .precio{
+  font-family:var(--titulos);
+  font-weight:800;
+  font-size:32px;
+  line-height:1;
+}
+
+/* ===== Buscador y categorías ===== */
+#filtros{
+  margin-bottom:12px;
+}
+#buscador{
+  width:100%;
+  box-sizing:border-box;
+  padding:14px 16px;
+  border:2px solid var(--linea);
+  border-radius:4px;
+  background:var(--blanco);
+  font-family:var(--texto);
+  font-size:17px;
+  color:var(--tinta);
+}
+#buscador:focus{
+  outline:none;
+  border-color:var(--tinta);
+}
+#categorias{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+#categorias .chip{
+  padding:7px 14px;
+  border:1px solid var(--linea);
+  border-radius:20px;
+  background:var(--blanco);
+  color:var(--tinta);
+  font-weight:500;
+  font-size:14px;
+}
+#categorias .chip:hover{
+  border-color:var(--tinta);
+  background:var(--blanco);
+}
+#categorias .chip.activo{
+  border-color:var(--tinta);
+  background:var(--tinta);
+  color:var(--blanco);
+}
+#contador{
+  margin:16px 0px 12px 0px;
+  font-size:14px;
+  color:var(--gris);
+}
+
+/* Icono grande y categoría de cada producto */
+article .icono{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  height:120px;
+  margin:-20px -20px 16px -20px;
+  background:var(--papel);
+  border-bottom:1px solid var(--linea);
+  font-size:56px;
+}
+article .categoria{
+  margin-bottom:4px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--naranja-oscuro);
+}
+
+/* ===== Botones ===== */
+button{
+  padding:10px 18px;
+  border:0px;
+  border-radius:4px;
+  background:var(--naranja);
+  color:var(--blanco);
+  font-family:var(--texto);
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+}
+button:hover{
+  background:var(--naranja-oscuro);
+}
+button:focus-visible{
+  outline:3px solid var(--tinta);
+  outline-offset:2px;
+}
+
+/* ===== Pie de página ===== */
+footer{
+  max-width:1100px;
+  margin:0px auto;
+  padding:24px 24px 48px 24px;
+  font-size:14px;
+  color:var(--gris);
+}
+
+/* ===== Ticket del pedido ===== */
+aside{
+  width:280px;
+  max-height:70vh;
+  overflow-y:auto;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:20px 20px 36px 20px;
+  box-sizing:border-box;
+  background:var(--blanco);
+  color:var(--tinta);
+  font-family:"Courier New",monospace;
+  font-size:14px;
+  line-height:1.4;
+  filter:drop-shadow(0px 8px 16px rgba(0,0,0,0.2));
+  /* borde de abajo en zigzag, como un ticket cortado */
+  -webkit-mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/12px 100%;
+          mask:conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/12px 100%;
+}
+aside h3{
+  margin:0px 0px 8px 0px;
+  padding-bottom:12px;
+  text-align:center;
+  font-size:16px;
+  border-bottom:2px dashed var(--linea);
+}
+aside p{
+  margin:0px;
+  padding:6px 0px;
+}
+/* Cada producto del ticket: nombre a la izquierda, precio a la derecha */
+aside .linea,
+aside .total{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+aside .linea span:last-child{
+  white-space:nowrap;
+}
+aside .linea{
+  border-bottom:1px dotted var(--linea);
+}
+aside .total{
+  margin-top:8px;
+  padding-top:10px;
+  border-top:2px dashed var(--linea);
+  font-size:16px;
+  font-weight:bold;
+}
+aside .vacio{
+  color:var(--gris);
+}
+aside .hecho{
+  font-weight:bold;
+  text-align:center;
+}
+aside .quitar{
+  width:auto;
+  margin:0px 0px 0px 6px;
+  padding:0px 6px;
+  background:transparent;
+  color:var(--gris);
+  font-size:16px;
+  line-height:1;
+}
+aside .quitar:hover{
+  background:transparent;
+  color:var(--naranja);
+}
+aside #comprar{
+  width:100%;
+  margin-top:14px;
+  background:var(--tinta);
+}
+aside #comprar:hover{
+  background:var(--naranja);
+}
+
+/* En pantallas grandes dejo sitio al ticket para que no tape productos */
+@media (min-width:1200px){
+  main,footer{margin-right:320px;margin-left:auto;}
+  header h1,header h2{max-width:none;}
+}
+
+/* ===== Móvil ===== */
+@media (max-width:600px){
+  header{padding:36px 16px 32px 16px;}
+  header h1{font-size:48px;}
+  main{padding:24px 16px 260px 16px;}
+  footer{padding:16px 16px 260px 16px;}
+  aside{width:auto;left:10px;right:10px;bottom:10px;max-height:40vh;}
+  /* Si el pedido está vacío, en el móvil solo enseño el título */
+  aside:has(.vacio){padding-bottom:20px;}
+  aside:has(.vacio) h3{margin:0px;padding:0px;border:0px;}
+  aside .vacio{display:none;}
+  /* Las categorías se deslizan en una sola fila */
+  #categorias{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;}
+  #categorias .chip{flex:0 0 auto;}
+}
+
+/* =========================================== */
+/* ===== Panel de administración (/admin) ===== */
+/* =========================================== */
+body#admin{
+  display:flex;
+  min-height:100vh;
+  background:var(--papel);
+}
+#admin #izquierda{
+  display:flex;
+  flex-direction:column;
+  flex:0 0 230px;
+  box-sizing:border-box;
+  position:sticky;
+  top:0;
+  height:100vh;
+  padding:28px 14px;
+  background:var(--tinta);
+  border-right:6px solid var(--naranja);
+}
+#admin #izquierda::before{
+  content:"Tienda deportiva";
+  margin:0px 0px 24px 0px;
+  padding:0px 12px;
+  font-family:var(--titulos);
+  font-weight:800;
+  font-size:28px;
+  line-height:1;
+  text-transform:uppercase;
+  color:var(--blanco);
+}
+#admin #izquierda a{
+  display:block;
+  margin:2px 0px;
+  padding:10px 12px;
+  border-radius:4px;
+  color:rgba(255,255,255,0.7);
+  text-decoration:none;
+  font-weight:500;
+}
+#admin #izquierda a:hover,
+#admin #izquierda a.activo{
+  background:rgba(255,255,255,0.1);
+  color:var(--blanco);
+}
+#admin #derecha{
+  flex:1 1 0;
+  min-width:0;
+  padding:36px 40px;
+  overflow-x:auto;
+}
+#admin #derecha h1{
+  margin:0px 0px 20px 0px;
+  font-family:var(--titulos);
+  font-weight:800;
+  font-size:48px;
+  line-height:1;
+}
+
+/* Resumen: tres cifras en una tira, como un marcador */
+#resumen{
+  display:flex;
+  flex-wrap:wrap;
+  margin-bottom:24px;
+  background:var(--blanco);
+  border:1px solid var(--linea);
+  border-radius:4px;
+}
+#resumen div{
+  flex:1 1 160px;
+  padding:16px 20px;
+  border-right:1px solid var(--linea);
+}
+#resumen div:last-child{border-right:0px;}
+#resumen span{
+  display:block;
+  font-size:14px;
+  color:var(--gris);
+}
+#resumen strong{
+  font-family:var(--titulos);
+  font-weight:800;
+  font-size:36px;
+  line-height:1.1;
+}
+
+/* Tabla de pedidos */
+#admin table{
+  width:100%;
+  border-collapse:collapse;
+  background:var(--blanco);
+  border:1px solid var(--linea);
+  font-size:15px;
+}
+#admin th{
+  padding:14px 18px;
+  text-align:left;
+  font-size:14px;
+  font-weight:600;
+  color:var(--gris);
+  border-bottom:2px solid var(--tinta);
+}
+#admin td{
+  padding:14px 18px;
+  vertical-align:top;
+  border-bottom:1px solid var(--linea);
+}
+#admin td:first-child{
+  font-weight:600;
+  white-space:nowrap;
+}
+#admin td:nth-child(2){
+  white-space:nowrap;
+  color:var(--gris);
+}
+#admin td ul{
+  margin:0px;
+  padding:0px;
+  list-style:none;
+}
+#admin td li{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  max-width:420px;
+  padding:2px 0px;
+}
+#admin td li span:last-child{color:var(--gris);white-space:nowrap;}
+#admin td.importe{
+  font-family:var(--titulos);
+  font-weight:800;
+  font-size:24px;
+  white-space:nowrap;
+}
+#admin tbody tr:hover{background:rgb(250,250,247);}
+
+@media (max-width:760px){
+  body#admin{flex-direction:column;}
+  #admin #izquierda{
+    position:static;
+    height:auto;
+    flex:none;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:center;
+    padding:16px;
+    border-right:0px;
+    border-bottom:6px solid var(--naranja);
+  }
+  #admin #izquierda::before{width:100%;margin-bottom:8px;}
+  #admin #derecha{padding:20px 16px;}
+  #admin th,#admin td{padding:10px;}
+}
+
+/* ===== Extras de la demo en GitHub Pages ===== */
+footer a{color:var(--tinta);}
+aside .hecho a{color:var(--naranja-oscuro);font-weight:bold;}
+#admin .nota{
+  max-width:70ch;
+  margin:0px 0px 20px 0px;
+  padding:12px 16px;
+  background:var(--blanco);
+  border-left:4px solid var(--naranja);
+  color:var(--gris);
+  font-size:15px;
+}
